@@ -1,0 +1,90 @@
+--1. --UPDATE: Instead for number 1 find the Address for sales person number 281
+
+Select AddressLine1
+from Sales.SalesPerson
+join Person.BusinessEntityAddress
+on SalesPerson.BusinessEntityID = BusinessEntityAddress.BusinessEntityID
+join Person.Address
+on BusinessEntityAddress.AddressID = Address.AddressID 
+where BusinessEntityAddress.BusinessEntityID = '281'
+
+--2. Quantity of items in an order - any order
+
+select SalesOrderDetailID, OrderQty
+from AdventureWorks.Sales.SalesOrderDetail
+where SalesOrderDetailID = 2
+
+
+
+--3. All People living in Apartments - Write your assumption
+
+--Assumption is that if someone has something listed in address line 2 (aka. apt number) then they are in an apartment.
+
+Select FirstName, LastName
+from Person.Person
+join Person.BusinessEntityAddress
+on Person.BusinessEntityID = BusinessEntityAddress.BusinessEntityID
+join Person.Address
+on BusinessEntityAddress.AddressID = Address.AddressID
+where AddressLine2 IS NOT NULL
+
+
+
+--4. Zipcode for a specific person
+
+
+Select PostalCode
+from Person.Address
+join Person.BusinessEntityAddress
+on Address.AddressID = BusinessEntityAddress.AddressID
+join Person.Person
+on BusinessEntityAddress.BusinessEntityID = Person.BusinessEntityID
+where FirstName	= 'Terri' and LastName = 'Duffy'
+
+
+
+--5. All orders for a specific customer and the Order Qty
+
+Select SalesOrderNumber, sum(OrderQty) as TotalOrderQty
+from Sales.SalesOrderDetail
+join Sales.SalesOrderHeader
+on SalesOrderDetail.SalesOrderID = SalesOrderHeader.SalesOrderID
+where SalesOrderHeader.CustomerID = '29580'
+GROUP BY SalesOrderNumber
+
+
+
+--6. 50 customers with the most sales
+
+select top 50 CustomerID, sum(TotalDue) as TotalSales
+from Sales.SalesOrderHeader
+GROUP BY CustomerID
+order by TotalSales desc
+
+--7. 50 sales persons with the most sales
+
+select top 50 SalesPersonID, sum(TotalDue) as TotalSales
+from Sales.SalesOrderHeader
+where SalesOrderHeader.SalesPersonID IS NOT NULL
+GROUP BY SalesPersonID
+order by TotalSales desc
+
+
+
+--8. Table with customer information(
+--all infor from Person.Person as well as 
+--full address(AdressLine1,city, state,postalcode, country all in one column displayed as Address), 
+--email and passwordhash). Select 30 customers
+
+select top 30 Person.*, concat(AddressLine1,' ' ,City,' ' ,StateProvince.Name, ' ' ,PostalCode, ' ', StateProvince.Name) as Address, PasswordHash, EmailAddress
+from Person.Person
+join Person.BusinessEntityAddress
+on Person.BusinessEntityID = BusinessEntityAddress.BusinessEntityID
+join Person.Address
+on BusinessEntityAddress.AddressID = Address.AddressID
+join Person.StateProvince
+on Address.StateProvinceID = StateProvince.StateProvinceID
+join Person.Password
+on Person.BusinessEntityID = Password.BusinessEntityID
+join Person.EmailAddress
+on Person.BusinessEntityID = EmailAddress.BusinessEntityID
