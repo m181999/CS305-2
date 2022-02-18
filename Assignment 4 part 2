@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[13]:
+
+
+import requests
+import json
+
+url = "https://api.fda.gov/drug/event.json?limit=20"
+
+requestData = requests.get(url)
+print(requestData.text)
+
+
+# In[14]:
+
+
+drugAlertData = json.loads(requestData.text)
+print(drugAlertData)
+
+
+# In[16]:
+
+
+print(drugAlertData['results'][0])
+
+
+# In[24]:
+
+
+print('companynumb')
+
+for authNum in drugAlertData['results']:
+    print(authNum['companynumb'])
