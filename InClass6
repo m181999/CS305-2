@@ -1,0 +1,51 @@
+#import csv into dataframe
+inClassDF <- read_csv("/Users/matt.held/OneDrive - Edgewood College/Classes/Senior Year/Spring 2022/Introduction to Data Analytics - CS 305/Week 6/InClassAssign/starbucks_drinkMenu_expanded.csv")
+head(inClassDF)
+
+#drop `Total Fat (g)` column (unwanted)
+inClassDF <- select(inClassDF, -`Total Fat (g)`)
+head(inClassDF)
+
+
+#see column names
+colnames (inClassDF)
+
+#rename columns to remove unwanted characters
+colnames(inClassDF) <- c("Beverage_category", "Beverage", "Beverage_prep", "Calories", "Trans_Fat", "Saturated_Fat", "Sodium", "Total_Carbohydrates", "Cholesterol", "Dietary_Fibre", "Sugars", "Protein", "Vitamin_A", "Vitamin_C", "Calcium", "Iron")
+head(inClassDF)
+
+#Change the encoding of the beverage_category and beverage columns to be ascii
+inClassDF$Beverage_category <- iconv(inClassDF$Beverage_category, 'utf-8', 'ascii', sub='')
+head(inClassDF)
+
+#change change column type
+cols <- names(inClassDF)[5]
+inClassDF[cols] <- lapply(inClassDF[cols], as.integer)
+head(inClassDF)
+
+
+#remove n/as
+inClassDF <- na.omit(inClassDF)
+print(inClassDF)
+
+
+#change change column type
+cols <- names(inClassDF)[9]
+inClassDF[cols] <- lapply(inClassDF[cols], as.integer)
+head(inClassDF)
+
+#Drop non-labeled column.
+inClassDF = select(inClassDF, -17)
+head(inClassDF)
+view(inClassDF)
+
+#add another column based on another column's values
+inClassDF <- inClassDF %>% 
+  mutate(IsHighCholesterol = if_else(Cholesterol > 15, "No", "Yes"))
+print(inClassDF)
+view(inClassDF)
+
+
+
+
+
